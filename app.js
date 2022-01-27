@@ -3,10 +3,14 @@ const ctx = canvas.getContext("2d");
 const colors = document.getElementsByClassName("controls_color")
 const range = document.getElementById("jsRange")
 const mode = document.getElementById("jsMode")
+const save = document.getElementById("jsSave")
 const INITIAL_COLOR = "#2c2c2c"     //  기본 색상
 
 canvas.width = 400;
 canvas.height = 600;
+
+ctx.fillStyle = "white"
+ctx.fillRect(0,0,canvas.width,canvas.height)
 ctx.strokeStyle = INITIAL_COLOR 
 ctx.fillStyle = INITIAL_COLOR
 ctx.lineWidth = 2.5;
@@ -39,6 +43,12 @@ function handleRangeChange(event) {
     ctx.lineWidth = size
 }
 
+function handleCanvasClick(event){
+    if(filling){
+        ctx.fillRect(0,0,canvas.width,canvas.height)
+    }
+}
+
 function handleModeClick(event) {
     if (!filling) {
         filling = true
@@ -49,10 +59,12 @@ function handleModeClick(event) {
     }
 }
 
-function handleCanvasClick(event){
-    if(filling){
-        ctx.fillRect(0,0,canvas.width,canvas.height)
-    }
+function handleSaveClick(event) {
+    const image = canvas.toDataURL("image/jpeg")
+    const link = document.createElement("a")   // anchor 앵커 태그 생성
+    link.href = image                          //href는 이미지 URL 경로
+    link.download = "PaintJS[🎨]"             //download는 파일 이름
+    link.click()
 }
 
 function handleColorClick(event) {
@@ -67,6 +79,10 @@ function handleColorClick(event) {
      */
 }
 
+function handelCM(event){
+    event.preventDefault()
+}
+
 
 //  --------------------eventListener--------------------
 
@@ -77,6 +93,9 @@ if (range) {
 if (mode) {
     mode.addEventListener("click", handleModeClick)
 }
+if(save){
+    save.addEventListener("click", handleSaveClick)
+}
 
 if (canvas) {
     canvas.addEventListener("mousemove", onMouseMove)
@@ -84,6 +103,7 @@ if (canvas) {
     canvas.addEventListener("mouseup", stopPainting)
     canvas.addEventListener("mouseleave", stopPainting)
     canvas.addEventListener("click", handleCanvasClick)
+    canvas.addEventListener("contextmenu",handelCM)
     /*
      * canvas가 존재하면 이벤트리스너 생성
      * canvas.addEventListener("이벤트리스너 이름" , 함수);
